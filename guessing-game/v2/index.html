@@ -1,1 +1,227 @@
 
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第一版｜四位數猜數字</title>
+
+  <style>
+    body {
+      font-family: Arial, "Noto Sans TC", sans-serif;
+      background: #101820;
+      color: #f4f4f4;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px 20px;
+      background: #1d2b36;
+      border-radius: 15px;
+    }
+
+    h1 {
+      color: #a8d5ba;
+    }
+
+    input {
+      padding: 12px;
+      width: 160px;
+      font-size: 20px;
+      text-align: center;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      padding: 12px 18px;
+      margin: 8px;
+      background: #527b65;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #6b987e;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #result {
+      margin: 20px;
+      font-size: 22px;
+      color: #a8d5ba;
+    }
+
+    .back {
+      display: inline-block;
+      margin-top: 20px;
+      color: #a8d5ba;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>四位數猜數字</h1>
+    <p>請猜出系統產生的四位數字！</p>
+    <p>數字不能重複，答案可能以 0 開頭。</p>
+
+    <input
+      type="text"
+      id="guessInput"
+      maxlength="4"
+      inputmode="numeric"
+      placeholder="輸入四位數"
+    >
+
+    <br>
+
+    <button id="submitBtn">確認答案</button>
+    <button id="restartBtn">重新開始</button>
+
+    <p id="result">遊戲準備開始！</p>
+
+    <label>
+      <input type="checkbox" id="debugToggle">
+      顯示正確答案（測試用）
+    </label>
+
+    <p id="answerDisplay"></p>
+
+<hr>
+
+<section>
+  <h2>目前遊戲資訊</h2>
+  <p id="roundInfo">第 1 局｜進行中</p>
+</section>
+
+<hr>
+
+<section>
+  <h2>遊戲歷史紀錄</h2>
+  <div id="historyList">
+    <p>目前還沒有歷史紀錄。</p>
+  </div>
+</section>
+
+<a class="back" href="../index.html">返回版本選擇首頁</a>
+  </div>
+
+  <script>
+    const guessInput = document.getElementById("guessInput");
+    const submitBtn = document.getElementById("submitBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const result = document.getElementById("result");
+    const debugToggle = document.getElementById("debugToggle");
+    const answerDisplay = document.getElementById("answerDisplay");
+
+    let answer = "";
+    let gameOver = false;
+
+    // 產生四個不重複的隨機數字
+    function generateAnswer() {
+      const digits = ["0","1","2","3","4","5","6","7","8","9"];
+
+      for (let i = digits.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [digits[i], digits[j]] = [digits[j], digits[i]];
+      }
+
+      return digits.slice(0, 4).join("");
+    }
+
+    // 顯示或隱藏正確答案
+    function updateAnswerDisplay() {
+      if (debugToggle.checked) {
+        answerDisplay.textContent = "目前答案：" + answer;
+      } else {
+        answerDisplay.textContent = "";
+      }
+    }
+
+    debugToggle.addEventListener("change", updateAnswerDisplay);
+
+    // 計算 A 和 B
+    function checkAnswer(guess) {
+      let A = 0;
+      let B = 0;
+
+      for (let i = 0; i < 4; i++) {
+        if (guess[i] === answer[i]) {
+          A++;
+        } else if (answer.includes(guess[i])) {
+          B++;
+        }
+      }
+
+      return { A, B };
+    }
+
+    // 提交猜測
+    function submitGuess() {
+      if (gameOver) return;
+
+      const guess = guessInput.value.trim();
+
+      if (!/^\d{4}$/.test(guess)) {
+        result.textContent = "請輸入完整的四位數字！";
+        return;
+      }
+
+      if (new Set(guess).size !== 4) {
+        result.textContent = "數字不能重複，請重新輸入！";
+        return;
+      }
+
+      const { A, B } = checkAnswer(guess);
+
+      result.textContent = `${A}A${B}B`;
+
+      if (A === 4) {
+        result.textContent = "恭喜你猜對了！答案是 " + answer;
+        gameOver = true;
+        guessInput.disabled = true;
+        submitBtn.disabled = true;
+      }
+
+      guessInput.value = "";
+    }
+
+    // 開始新遊戲
+    function startGame() {
+      answer = generateAnswer();
+      gameOver = false;
+
+      guessInput.value = "";
+      guessInput.disabled = false;
+      submitBtn.disabled = false;
+
+      result.textContent = "新遊戲開始！請猜猜看。";
+
+      debugToggle.checked = false;
+      updateAnswerDisplay();
+    }
+
+    submitBtn.addEventListener("click", submitGuess);
+    restartBtn.addEventListener("click", startGame);
+
+    guessInput.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    submitGuess();
+  }
+});
+    
+    startGame();
+  </script>
+</body>
+</html>
