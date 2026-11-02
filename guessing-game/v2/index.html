@@ -149,6 +149,17 @@ let currentRound = null;
 
       return digits.slice(0, 4).join("");
     }
+    // 建立一局新的遊戲資料
+function createRound() {
+  return {
+    number: rounds.length + 1,
+    answer: generateAnswer(),
+    startTime: new Date(),
+    stopTime: null,
+    status: "playing",
+    guesses: []
+  };
+}
 
     // 顯示或隱藏正確答案
     function updateAnswerDisplay() {
@@ -208,19 +219,36 @@ let currentRound = null;
     }
 
     // 開始新遊戲
-    function startGame() {
-      answer = generateAnswer();
-      gameOver = false;
+function startGame() {
 
-      guessInput.value = "";
-      guessInput.disabled = false;
-      submitBtn.disabled = false;
+  // 如果上一局還在進行，就標記為未完成
+  if (currentRound && currentRound.status === "playing") {
+    currentRound.status = "unfinished";
+    currentRound.stopTime = new Date();
+  }
 
-      result.textContent = "新遊戲開始！請猜猜看。";
+  // 建立新的一局
+  currentRound = createRound();
+  rounds.push(currentRound);
 
-      debugToggle.checked = false;
-      updateAnswerDisplay();
-    }
+  // 使用目前這一局的答案
+  answer = currentRound.answer;
+  gameOver = false;
+
+  // 重設遊戲畫面
+  guessInput.value = "";
+  guessInput.disabled = false;
+  submitBtn.disabled = false;
+
+  result.textContent = "新遊戲開始！請猜猜看。";
+
+  // 新的一局預設關閉答案提示
+  debugToggle.checked = false;
+  updateAnswerDisplay();
+
+  // 更新目前局數
+  roundInfo.textContent = `第 ${currentRound.number} 局｜進行中`;
+}
 
     submitBtn.addEventListener("click", submitGuess);
     restartBtn.addEventListener("click", startGame);
