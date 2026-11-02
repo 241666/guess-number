@@ -160,7 +160,75 @@ function createRound() {
     guesses: []
   };
 }
+// 將時間轉換成容易閱讀的格式
+function formatTime(date) {
+  if (!date) return "尚未結束";
 
+  return date.toLocaleString("zh-TW", {
+    hour12: false
+  });
+}
+
+// 更新歷史紀錄畫面
+function renderHistory() {
+  historyList.innerHTML = "";
+
+  if (rounds.length === 0) {
+    historyList.textContent = "目前還沒有歷史紀錄。";
+    return;
+  }
+
+  rounds.forEach(function(round) {
+    const roundCard = document.createElement("div");
+
+    const statusText = {
+      playing: "進行中",
+      won: "已猜對",
+      unfinished: "未完成"
+    };
+
+    const title = document.createElement("h3");
+    title.textContent =
+      `第 ${round.number} 局｜${statusText[round.status]}`;
+
+    roundCard.appendChild(title);
+
+    const startText = document.createElement("p");
+    startText.textContent = "開始時間：" + formatTime(round.startTime);
+    roundCard.appendChild(startText);
+
+    const stopText = document.createElement("p");
+    stopText.textContent = "結束時間：" + formatTime(round.stopTime);
+    roundCard.appendChild(stopText);
+
+    const answerText = document.createElement("p");
+    answerText.textContent = "正確答案：" +
+      (round.status === "playing" ? "遊戲進行中" : round.answer);
+    roundCard.appendChild(answerText);
+
+    const guessTitle = document.createElement("p");
+    guessTitle.textContent = "猜測紀錄：";
+    roundCard.appendChild(guessTitle);
+
+    if (round.guesses.length === 0) {
+      const emptyText = document.createElement("p");
+      emptyText.textContent = "尚無猜測紀錄";
+      roundCard.appendChild(emptyText);
+    } else {
+      round.guesses.forEach(function(item) {
+        const guessText = document.createElement("p");
+
+        guessText.textContent =
+          `第 ${item.order} 次：${item.guess} → ${item.A}A${item.B}B（${formatTime(item.time)}）`;
+
+        roundCard.appendChild(guessText);
+      });
+    }
+
+    historyList.appendChild(roundCard);
+  });
+}
+    
     // 顯示或隱藏正確答案
     function updateAnswerDisplay() {
       if (debugToggle.checked) {
