@@ -123,10 +123,20 @@
     const restartBtn = document.getElementById("restartBtn");
     const result = document.getElementById("result");
     const debugToggle = document.getElementById("debugToggle");
-    const answerDisplay = document.getElementById("answerDisplay");
+const answerDisplay = document.getElementById("answerDisplay");
 
-    let answer = "";
-    let gameOver = false;
+// 第二版新增：歷史紀錄區
+const roundInfo = document.getElementById("roundInfo");
+const historyList = document.getElementById("historyList");
+
+let answer = "";
+let gameOver = false;
+
+// 儲存所有遊戲局數
+let rounds = [];
+
+// 目前正在進行的遊戲
+let currentRound = null;
 
     // 產生四個不重複的隨機數字
     function generateAnswer() {
