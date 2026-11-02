@@ -188,35 +188,57 @@ function createRound() {
       return { A, B };
     }
 
-    // 提交猜測
-    function submitGuess() {
-      if (gameOver) return;
+// 提交猜測
+function submitGuess() {
+  if (gameOver || !currentRound) return;
 
-      const guess = guessInput.value.trim();
+  const guess = guessInput.value.trim();
 
-      if (!/^\d{4}$/.test(guess)) {
-        result.textContent = "請輸入完整的四位數字！";
-        return;
-      }
+  // 檢查是否為四位數字
+  if (!/^\d{4}$/.test(guess)) {
+    result.textContent = "請輸入完整的四位數字！";
+    return;
+  }
 
-      if (new Set(guess).size !== 4) {
-        result.textContent = "數字不能重複，請重新輸入！";
-        return;
-      }
+  // 檢查數字是否重複
+  if (new Set(guess).size !== 4) {
+    result.textContent = "數字不能重複，請重新輸入！";
+    return;
+  }
 
-      const { A, B } = checkAnswer(guess);
+  // 計算 A、B
+  const { A, B } = checkAnswer(guess);
 
-      result.textContent = `${A}A${B}B`;
+  // 記錄這次有效猜測
+  currentRound.guesses.push({
+    order: currentRound.guesses.length + 1,
+    guess: guess,
+    A: A,
+    B: B,
+    time: new Date()
+  });
 
-      if (A === 4) {
-        result.textContent = "恭喜你猜對了！答案是 " + answer;
-        gameOver = true;
-        guessInput.disabled = true;
-        submitBtn.disabled = true;
-      }
+  result.textContent = `${A}A${B}B`;
 
-      guessInput.value = "";
-    }
+  // 猜中答案
+  if (A === 4) {
+    result.textContent = "恭喜你猜對了！答案是 " + answer;
+
+    gameOver = true;
+    currentRound.status = "won";
+    currentRound.stopTime = new Date();
+
+    guessInput.disabled = true;
+    submitBtn.disabled = true;
+
+    roundInfo.textContent = `第 ${currentRound.number} 局｜已猜對`;
+
+    // 完成遊戲後顯示答案
+    updateAnswerDisplay();
+  }
+
+  guessInput.value = "";
+}
 
     // 開始新遊戲
 function startGame() {
