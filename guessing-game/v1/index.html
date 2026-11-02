@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>猜數字遊戲｜Version 01</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      background: #101820;
+      color: #f4f4f4;
+      font-family: Arial, "Noto Sans TC", sans-serif;
+      text-align: center;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      background: #1d2b36;
+      border-radius: 16px;
+    }
+
+    h1 {
+      color: #a8d5ba;
+    }
+
+    input {
+      width: 180px;
+      padding: 12px;
+      margin: 12px;
+      font-size: 22px;
+      text-align: center;
+      border-radius: 8px;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 8px;
+      border: none;
+      border-radius: 8px;
+      background: #527b65;
+      color: white;
+      cursor: pointer;
+    }
+
+    #result {
+      min-height: 30px;
+      margin: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>四位數猜數字</h1>
+    <p>請輸入四個不重複的數字，挑戰猜出正確答案！</p>
+
+    <input
+      type="text"
+      id="guessInput"
+      maxlength="4"
+      inputmode="numeric"
+      placeholder="輸入四位數"
+    >
+
+    <br>
+
+    <button id="submitBtn">送出猜測</button>
+    <button id="restartBtn">重新開始</button>
+
+    <p id="result">等待開始遊戲……</p>
+
+    <label>
+      <input type="checkbox" id="debugToggle">
+      開啟除錯模式
+    </label>
+
+    <p id="answerDisplay"></p>
+  </main>
+
+  <script>
+    // 下一步：在這裡加入遊戲邏輯
+  </script>
+</body>
+</html>
